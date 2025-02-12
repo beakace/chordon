@@ -534,6 +534,7 @@ export default function ProgressionGenerator({
                 onChange={handleTempoChange}
                 min={30}
                 max={240}
+                disabled={isPlaying}
               />
             </div>
           </motion.div>
