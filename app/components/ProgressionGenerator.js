@@ -8,6 +8,7 @@ import {
 } from "../utils/chordMappings";
 import { transposeChord } from "../utils/transposition";
 import TempoSlider from "./TempoSlider";
+import { AnimatePresence, motion } from "framer-motion";
 
 // Mapping from API chord notation to our chord format
 const apiChordMapping = {
@@ -261,92 +262,283 @@ export default function ProgressionGenerator({
   };
 
   return (
-    <div className="flex flex-col gap-4 items-center mt-8">
-      <h2 className="text-xl font-bold">Random Progression</h2>
+    <div className="flex flex-col gap-4 items-center mt-8 min-h-[240px]">
+      <h2 className="text-xl uppercase font-bold">
+        chord progression generator
+      </h2>
 
-      <div className="w-full max-w-xl px-4">
-        <TempoSlider
-          name="tempo"
-          value={bpm}
-          onChange={handleTempoChange}
-          min={30}
-          max={240}
-        />
-      </div>
-
-      <button
-        onClick={fetchProgression}
-        disabled={!authToken || !audioInitialized || loadingIndex !== null}
-        className={`px-4 py-2 text-white rounded flex items-center gap-2 ${
-          !authToken || !audioInitialized || loadingIndex !== null
-            ? "bg-gray-500 cursor-not-allowed"
-            : "bg-secondary hover:bg-secondary/80"
-        }`}
-      >
-        {!audioInitialized
-          ? "Initialize Audio First"
-          : "Get Random Progression"}
-      </button>
-
-      <div className="flex gap-2">
-        {progression.map((chord, index) => (
-          <button
-            key={index}
-            onClick={() => chord && onChordClick(chord)}
-            disabled={!audioInitialized || !chord || loadingIndex === index}
-            className={`px-4 py-2 text-white rounded min-w-[60px] h-[40px] flex items-center justify-center 
-              ${
-                !audioInitialized || !chord
-                  ? "bg-gray-500 cursor-not-allowed"
-                  : currentPlayingIndex === index
-                  ? "bg-accent-1 ring-2 ring-accent-1 ring-offset-2 ring-offset-gray-800"
-                  : "bg-accent-2 hover:bg-accent-2"
-              } transition-all duration-150`}
-          >
-            {loadingIndex === index ? (
-              <div className="w-6 h-6">
-                <LoadingSpinner />
-              </div>
-            ) : chord ? (
-              selectedKey === "C" ? (
-                chord.display
+      <AnimatePresence mode="wait">
+        {progression.every((chord) => chord === null) ? (
+          <div className="relative w-32 h-16 group">
+            <div
+              className={`
+                absolute inset-0 rounded-full bg-accent-1/10 opacity-0 
+                ${
+                  audioInitialized && loadingIndex === null
+                    ? "group-hover:opacity-100"
+                    : ""
+                } 
+                -z-10 transition-opacity duration-150
+              `}
+            />
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              onClick={fetchProgression}
+              disabled={
+                !authToken || !audioInitialized || loadingIndex !== null
+              }
+              className={`
+                absolute inset-[1px] rounded-full bg-gray-100 text-accent-1 shadow-lg 
+                flex items-center justify-center transition-colors duration-150
+                group-hover:text-accent-1/80 uppercase 
+                ${
+                  !authToken || !audioInitialized || loadingIndex !== null
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }
+              `}
+              style={{
+                backdropFilter: "none",
+                WebkitBackdropFilter: "none",
+              }}
+            >
+              {loadingIndex !== null ? (
+                <div className="w-6 h-6">
+                  <LoadingSpinner />
+                </div>
               ) : (
-                transposeChord(chord.display, "C", selectedKey)
-              )
-            ) : (
-              "?"
-            )}
-          </button>
-        ))}
-      </div>
-
-      {progression.every((chord) => chord) && (
-        <div className="flex gap-2">
-          <button
-            onClick={playProgression}
-            disabled={isPlaying || !audioInitialized}
-            className={`px-4 py-2 text-white rounded ${
-              isPlaying || !audioInitialized
-                ? "bg-gray-500 cursor-not-allowed"
-                : "bg-secondary hover:bg-secondary/80"
-            }`}
+                "Generate"
+              )}
+            </motion.button>
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center gap-4 w-full"
           >
-            Play Loop
-          </button>
+            <div className="flex gap-4">
+              {progression.map((chord, index) => (
+                <div key={index} className="relative w-16 h-16 group">
+                  <motion.div
+                    className={`
+                      absolute inset-0 rounded-full bg-gradient-conic opacity-0 
+                      ${
+                        audioInitialized && chord && loadingIndex !== index
+                          ? "group-hover:opacity-100"
+                          : ""
+                      } 
+                      -z-10 [transition:opacity_150ms_ease-in] [&:hover]:transition-[opacity_2000ms_ease-out]
+                    `}
+                    animate={{
+                      rotate: 360,
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  />
+                  <button
+                    onClick={() => chord && onChordClick(chord)}
+                    disabled={
+                      !audioInitialized || !chord || loadingIndex === index
+                    }
+                    className={`
+                      absolute inset-[1px] rounded-full bg-gray-100 text-accent-1 shadow-lg 
+                      flex items-center justify-center
+                      ${
+                        !audioInitialized || !chord || loadingIndex === index
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }
+                      ${
+                        currentPlayingIndex === index
+                          ? "ring-2 ring-accent-1 ring-offset-2 ring-offset-primary"
+                          : ""
+                      }
+                    `}
+                    style={{
+                      backdropFilter: "none",
+                      WebkitBackdropFilter: "none",
+                    }}
+                  >
+                    {loadingIndex === index ? (
+                      <div className="w-6 h-6">
+                        <LoadingSpinner />
+                      </div>
+                    ) : chord ? (
+                      selectedKey === "C" ? (
+                        chord.display
+                      ) : (
+                        transposeChord(chord.display, "C", selectedKey)
+                      )
+                    ) : (
+                      "?"
+                    )}
+                  </button>
+                </div>
+              ))}
+            </div>
 
-          <button
-            onClick={stopProgression}
-            disabled={!isPlaying || !audioInitialized}
-            className={`px-4 py-2 text-white rounded ${
-              !isPlaying || !audioInitialized
-                ? "bg-gray-500 cursor-not-allowed"
-                : "bg-red-500 hover:bg-red-600"
-            }`}
-          >
-            Stop
-          </button>
-        </div>
-      )}
+            <div className="flex gap-4">
+              <div className="relative w-12 h-12 group">
+                <motion.div
+                  className={`
+                    absolute inset-0 rounded-full bg-gradient-conic opacity-0 
+                    ${
+                      !isPlaying && audioInitialized && loadingIndex === null
+                        ? "group-hover:opacity-100"
+                        : ""
+                    } 
+                    -z-10 [transition:opacity_150ms_ease-in] [&:hover]:transition-[opacity_2000ms_ease-out]
+                  `}
+                  animate={{
+                    rotate: 360,
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+                <button
+                  onClick={playProgression}
+                  disabled={
+                    isPlaying || !audioInitialized || loadingIndex !== null
+                  }
+                  className={`
+                    absolute inset-[1px] rounded-full bg-gray-100 text-accent-1 shadow-lg 
+                    flex items-center justify-center
+                    ${
+                      isPlaying || !audioInitialized || loadingIndex !== null
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }
+                  `}
+                  style={{
+                    backdropFilter: "none",
+                    WebkitBackdropFilter: "none",
+                  }}
+                >
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="relative w-12 h-12 group">
+                <motion.div
+                  className={`
+                    absolute inset-0 rounded-full bg-gradient-conic opacity-0 
+                    ${
+                      isPlaying && audioInitialized
+                        ? "group-hover:opacity-100"
+                        : ""
+                    } 
+                    -z-10 [transition:opacity_150ms_ease-in] [&:hover]:transition-[opacity_2000ms_ease-out]
+                  `}
+                  animate={{
+                    rotate: 360,
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+                <button
+                  onClick={stopProgression}
+                  disabled={!isPlaying || !audioInitialized}
+                  className={`
+                    absolute inset-[1px] rounded-full bg-gray-100 text-accent-1 shadow-lg 
+                    flex items-center justify-center
+                    ${
+                      !isPlaying || !audioInitialized
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }
+                  `}
+                  style={{
+                    backdropFilter: "none",
+                    WebkitBackdropFilter: "none",
+                  }}
+                >
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M6 6h12v12H6z" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="relative w-36 h-12 group">
+                <div
+                  className={`
+                    absolute inset-0 rounded-full bg-accent-1/10 opacity-0 
+                    ${
+                      audioInitialized && loadingIndex === null
+                        ? "group-hover:opacity-100"
+                        : ""
+                    } 
+                    -z-10 transition-opacity duration-150
+                  `}
+                />
+                <button
+                  onClick={() => {
+                    stopProgression();
+                    setProgression(Array(4).fill(null));
+                    fetchProgression();
+                  }}
+                  disabled={!audioInitialized || loadingIndex !== null}
+                  className={`
+                    absolute inset-[1px] rounded-full bg-gray-100 text-accent-1 shadow-lg 
+                    flex items-center justify-center text-sm transition-colors duration-150
+                    group-hover:text-accent-1/80 uppercase 
+                    ${
+                      !audioInitialized || loadingIndex !== null
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }
+                  `}
+                  style={{
+                    backdropFilter: "none",
+                    WebkitBackdropFilter: "none",
+                  }}
+                >
+                  {loadingIndex !== null ? (
+                    <div className="w-6 h-6">
+                      <LoadingSpinner />
+                    </div>
+                  ) : (
+                    "Generate Again"
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="w-full max-w-[240px] px-4">
+              <TempoSlider
+                name="tempo"
+                value={bpm}
+                onChange={handleTempoChange}
+                min={30}
+                max={240}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

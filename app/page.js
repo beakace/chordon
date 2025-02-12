@@ -41,7 +41,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+    <div className="relative grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       {/* Base background */}
       <div className="fixed inset-0 -z-10 bg-primary"></div>
 
@@ -51,14 +51,18 @@ export default function Home() {
       {/* Second gradient blob - using primary */}
       <div className="absolute -z-10 top-[-1rem] left-[-35rem] h-[31.25rem] w-[50rem] rounded-full blur-[10rem] sm:w-[68.75rem] md:left-[-33rem] lg:left-[-28rem] xl:left-[-15rem] 2xl:left-[-5rem] bg-white"></div>
 
-      <main className="flex flex-col gap-8 row-start-2 items-center w-full max-w-4xl">
+      <h1 className="text-4xl font-extrabold tracking-wider text-accent-1 pt-8 italic">
+        CHORDON
+      </h1>
+
+      <main className="flex flex-col gap-8 items-center w-full max-w-[800px]">
         <AnimatePresence mode="wait">
           {!audioInitialized ? (
             <motion.div
               key="play-button"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 2 }}
+              exit={{ opacity: 0, scale: 1 }}
               transition={{
                 type: "spring",
                 stiffness: 500,
@@ -67,16 +71,6 @@ export default function Home() {
               }}
               className="flex flex-col items-center gap-4"
             >
-              <motion.h1
-                className="text-3xl font-bold text-center text-gray"
-                initial={{ y: -20 }}
-                animate={{ y: 0 }}
-              >
-                Welcome to{" "}
-                <span className="italic text-accent-1 text-4xl font-bold">
-                  CHORDON
-                </span>
-              </motion.h1>
               <PlayButton onClick={initializeAudio} />
             </motion.div>
           ) : (
@@ -121,7 +115,8 @@ export default function Home() {
                 transition={{ delay: 0.5 }}
                 className="w-full"
               >
-                <ChordKeyboard
+                <ProgressionGenerator
+                  authToken={authToken}
                   audioInitialized={audioInitialized}
                   onChordClick={playChord}
                   isAdvancedMode={isAdvancedMode}
@@ -135,8 +130,7 @@ export default function Home() {
                 transition={{ delay: 0.7 }}
                 className="w-full"
               >
-                <ProgressionGenerator
-                  authToken={authToken}
+                <ChordKeyboard
                   audioInitialized={audioInitialized}
                   onChordClick={playChord}
                   isAdvancedMode={isAdvancedMode}
@@ -147,6 +141,49 @@ export default function Home() {
           )}
         </AnimatePresence>
       </main>
+
+      <footer className="w-full text-center text-sm text-gray/80 space-y-1">
+        <p>
+          Created by{" "}
+          <a
+            href="https://github.com/beakace"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent-1 hover:text-accent-1/80 transition-colors duration-150"
+          >
+            beakace
+          </a>
+        </p>
+        <p>
+          Built with{" "}
+          <a
+            href="https://nextjs.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent-1 hover:text-accent-1/80 transition-colors duration-150"
+          >
+            Next.js
+          </a>
+          {", "}
+          <a
+            href="https://www.framer.com/motion/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent-1 hover:text-accent-1/80 transition-colors duration-150"
+          >
+            Framer Motion
+          </a>
+          {", and "}
+          <a
+            href="https://www.hooktheory.com/api/trends/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent-1 hover:text-accent-1/80 transition-colors duration-150"
+          >
+            Hooktheory API
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }

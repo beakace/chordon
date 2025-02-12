@@ -48,47 +48,82 @@ export default function ChordKeyboard({
     };
   };
 
+  const getTextSize = (text) => {
+    if (text.length > 4) return "text-sm";
+    if (text.length > 3) return "text-base";
+    return "text-lg";
+  };
+
   return (
-    <motion.div
-      layout
-      className="grid grid-cols-4 sm:grid-cols-7 gap-2 w-full place-items-center"
-    >
-      <AnimatePresence mode="wait">
-        {chords.map((chord) => {
-          const transposedChord = getTransposedChord(chord);
-          return (
-            <motion.button
-              key={chord.original}
-              onClick={() => onChordClick(chord)}
-              disabled={!audioInitialized}
-              className={`px-4 py-2 text-white rounded min-w-[60px] h-[40px] flex items-center justify-center ${
-                !audioInitialized
-                  ? "opacity-50 cursor-not-allowed"
-                  : "bg-primary hover:bg-primary-dark"
-              }`}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              layout
-              transition={{
-                opacity: { duration: 0.2 },
-                layout: { duration: 0.3 },
-                scale: { duration: 0.2 },
-              }}
-              whileHover={{
-                scale: audioInitialized ? 1.05 : 1,
-                transition: { duration: 0.2 },
-              }}
-              whileTap={{
-                scale: audioInitialized ? 0.95 : 1,
-                transition: { duration: 0.1 },
-              }}
-            >
-              {transposedChord.display}
-            </motion.button>
-          );
-        })}
-      </AnimatePresence>
-    </motion.div>
+    <div className="w-full flex flex-col gap-4 items-center">
+      <h2 className="text-xl uppercase font-bold text-center">
+        Chord Free Player
+      </h2>
+      <motion.div
+        layout="position"
+        className={`
+          grid grid-cols-4 sm:grid-cols-7 gap-4 w-full place-items-center 
+          ${isAdvancedMode ? "min-h-[320px]" : "min-h-[180px]"}
+          overflow-y-auto p-4
+        `}
+        style={{
+          gridTemplateRows: `repeat(${Math.ceil(chords.length / 7)}, ${
+            isAdvancedMode ? "minmax(64px, 64px)" : "minmax(64px, 1fr)"
+          })`,
+        }}
+      >
+        <AnimatePresence mode="wait">
+          {chords.map((chord) => {
+            const transposedChord = getTransposedChord(chord);
+            return (
+              <motion.div
+                key={chord.original}
+                className="relative w-16 h-16 group"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                whileHover={{
+                  scale: 1,
+                }}
+              >
+                <motion.div
+                  className="absolute inset-0 rounded-full bg-gradient-conic opacity-0 group-hover:opacity-100 -z-10 [transition:opacity_150ms_ease-in] [&:hover]:transition-[opacity_2000ms_ease-out]"
+                  animate={{
+                    rotate: 360,
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+                <button
+                  onClick={() => onChordClick(chord)}
+                  disabled={!audioInitialized}
+                  className={`
+                    absolute inset-[1px] rounded-full bg-gray-100 text-accent-1 shadow-lg 
+                    flex items-center justify-center z-10
+                    ${!audioInitialized ? "opacity-50 cursor-not-allowed" : ""}
+                  `}
+                  style={{
+                    backdropFilter: "none",
+                    WebkitBackdropFilter: "none",
+                  }}
+                >
+                  <span
+                    className={`relative ${getTextSize(
+                      transposedChord.display
+                    )}`}
+                  >
+                    {transposedChord.display}
+                  </span>
+                </button>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </motion.div>
+    </div>
   );
 }

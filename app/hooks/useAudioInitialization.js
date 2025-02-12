@@ -88,7 +88,7 @@ export function useAudioInitialization() {
     const reverb2 = new Tone.Reverb({
       decay: 10,
       preDelay: 0.1,
-      wet: 1,
+      wet: 0.5,
     }).toDestination();
 
     // SYNTH
