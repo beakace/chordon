@@ -282,7 +282,7 @@ export default function ProgressionGenerator({
         className={`px-4 py-2 text-white rounded flex items-center gap-2 ${
           !authToken || !audioInitialized || loadingIndex !== null
             ? "bg-gray-500 cursor-not-allowed"
-            : "bg-green-500 hover:bg-green-600"
+            : "bg-secondary hover:bg-secondary/80"
         }`}
       >
         {!audioInitialized
@@ -301,8 +301,8 @@ export default function ProgressionGenerator({
                 !audioInitialized || !chord
                   ? "bg-gray-500 cursor-not-allowed"
                   : currentPlayingIndex === index
-                  ? "bg-purple-700 ring-2 ring-purple-300 ring-offset-2 ring-offset-gray-800"
-                  : "bg-purple-500 hover:bg-purple-600"
+                  ? "bg-accent-1 ring-2 ring-accent-1 ring-offset-2 ring-offset-gray-800"
+                  : "bg-accent-2 hover:bg-accent-2"
               } transition-all duration-150`}
           >
             {loadingIndex === index ? (
@@ -330,7 +330,7 @@ export default function ProgressionGenerator({
             className={`px-4 py-2 text-white rounded ${
               isPlaying || !audioInitialized
                 ? "bg-gray-500 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600"
+                : "bg-secondary hover:bg-secondary/80"
             }`}
           >
             Play Loop

@@ -4,7 +4,7 @@ export default function PlayButton({ onClick }) {
   return (
     <motion.button
       onClick={onClick}
-      className="px-8 py-4 bg-coral text-cream rounded-lg text-xl font-bold shadow-lg hover:bg-coral-dark transition-colors"
+      className="px-8 py-4 bg-primary text-cream rounded-lg text-xl font-bold shadow-lg hover:bg-primary-dark transition-colors"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       animate={{

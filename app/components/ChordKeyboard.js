@@ -64,7 +64,7 @@ export default function ChordKeyboard({
               className={`px-4 py-2 text-cream rounded min-w-[60px] h-[40px] flex items-center justify-center ${
                 !audioInitialized
                   ? "bg-gray cursor-not-allowed opacity-50"
-                  : "bg-coral hover:bg-coral-dark"
+                  : "bg-primary hover:bg-primary-dark"
               }`}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
