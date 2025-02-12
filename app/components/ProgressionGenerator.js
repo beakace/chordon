@@ -7,6 +7,7 @@ import {
   getAdvancedChordName,
 } from "../utils/chordMappings";
 import { transposeChord } from "../utils/transposition";
+import TempoSlider from "./TempoSlider";
 
 // Mapping from API chord notation to our chord format
 const apiChordMapping = {
@@ -72,7 +73,7 @@ export default function ProgressionGenerator({
   const [loadingIndex, setLoadingIndex] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState(null);
-  const [bpm, setBpm] = useState(60); // Default 60 BPM
+  const [bpm, setBpm] = useState(120);
   const intervalRef = useRef(null);
 
   // Convert BPM to milliseconds (4 beats per chord)
@@ -255,25 +256,22 @@ export default function ProgressionGenerator({
     };
   }, []);
 
+  const handleTempoChange = (event) => {
+    setBpm(Number(event.target.value));
+  };
+
   return (
     <div className="flex flex-col gap-4 items-center mt-8">
       <h2 className="text-xl font-bold">Random Progression</h2>
 
-      <div className="flex flex-col items-center gap-2">
-        <div className="flex items-center gap-4">
-          <label htmlFor="bpm" className="text-sm font-medium">
-            BPM: {bpm}
-          </label>
-          <input
-            type="range"
-            id="bpm"
-            min="30"
-            max="240"
-            value={bpm}
-            onChange={(e) => setBpm(Number(e.target.value))}
-            className="w-48 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-          />
-        </div>
+      <div className="w-full max-w-xl px-4">
+        <TempoSlider
+          name="tempo"
+          value={bpm}
+          onChange={handleTempoChange}
+          min={30}
+          max={240}
+        />
       </div>
 
       <button

@@ -41,7 +41,16 @@ export default function Home() {
   };
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 bg-cream">
+    <div className="relative grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+      {/* Base background */}
+      <div className="fixed inset-0 -z-10 bg-primary"></div>
+
+      {/* First gradient blob - using accent-1 */}
+      <div className="absolute -z-10 top-[-6rem] right-[11rem] h-[31.25rem] w-[31.25rem] rounded-full blur-[10rem] sm:w-[68.75rem] bg-accent-1"></div>
+
+      {/* Second gradient blob - using primary */}
+      <div className="absolute -z-10 top-[-1rem] left-[-35rem] h-[31.25rem] w-[50rem] rounded-full blur-[10rem] sm:w-[68.75rem] md:left-[-33rem] lg:left-[-28rem] xl:left-[-15rem] 2xl:left-[-5rem] bg-white"></div>
+
       <main className="flex flex-col gap-8 row-start-2 items-center w-full max-w-4xl">
         <AnimatePresence mode="wait">
           {!audioInitialized ? (
@@ -49,8 +58,13 @@ export default function Home() {
               key="play-button"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.5 }}
+              exit={{ opacity: 0, scale: 2 }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 30,
+                mass: 1,
+              }}
               className="flex flex-col items-center gap-4"
             >
               <motion.h1
@@ -58,7 +72,10 @@ export default function Home() {
                 initial={{ y: -20 }}
                 animate={{ y: 0 }}
               >
-                Welcome to Chord Player
+                Welcome to{" "}
+                <span className="italic text-accent-1 text-4xl font-bold">
+                  CHORDON
+                </span>
               </motion.h1>
               <PlayButton onClick={initializeAudio} />
             </motion.div>

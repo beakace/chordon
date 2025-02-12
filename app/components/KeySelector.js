@@ -20,7 +20,7 @@ export default function KeySelector({ selectedKey, onKeyChange }) {
       <select
         value={selectedKey}
         onChange={(e) => onKeyChange(e.target.value)}
-        className="bg-primary/50 text-gray rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary"
+        className="bg-primary/50 text-gray rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary justify-center items-center"
       >
         {keys.map((key) => (
           <option key={key.value} value={key.value}>

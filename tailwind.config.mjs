@@ -7,12 +7,19 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-syne)"],
+      },
       colors: {
-        "primary-dark": "#141414",
-        primary: "#273DB4",
-        secondary: "#C50900",
-        "accent-1": "#F95CA4",
-        "accent-2": "#ED7845",
+        "primary-dark": "#314455",
+        primary: "#97AABD",
+        secondary: "#C96567",
+        "accent-1": "#C96567",
+        "accent-2": "#644E5B",
+      },
+      backgroundImage: {
+        "gradient-conic":
+          "linear-gradient(90deg, #314455, #644E5B, #9E5A63, #C96567, #97AABD)",
       },
     },
   },
